@@ -1,0 +1,189 @@
+/* Canary Deep — dark rock, lamp yellow, and pit-office paper for the cards.
+   gamekit supplies the screens, buttons, roster, PIN pad and leaderboard; this
+   file themes them through the --gk-* custom properties and adds the map, the
+   board screen and the results card. */
+
+:root {
+  --gk-accent:#ffc23d;  --gk-accent-sh:#c78e14;
+  --gk-green:#5fbf6a;   --gk-green-sh:#3d8a46;
+  --gk-blue:#4f9bd6;    --gk-blue-sh:#33709e;
+  --gk-grey:#7b8794;    --gk-grey-sh:#4f5a66;
+  --gk-danger:#e05c4a;  --gk-danger-sh:#a63a2c;
+  --gk-ink:#16202a;
+  --gk-card:rgba(243,238,228,.96);
+  --gk-key-bg:#eae4d8;  --gk-key-sh:#c8c0b1;
+  --gk-input-border:#cbc3b4;
+
+  --rock:#0d131a;
+  --rock2:#1a232e;
+  --lamp:#ffc23d;
+  --paper:#f3eee4;
+  --text:#dde5ee;
+  --dim:#93a2b1;
+}
+
+/* The root has to carry the base colour, not just the body: with
+   viewport-fit=cover iOS extends the visual viewport past height:100% in
+   standalone mode, and a colour set only on body leaves a white strip behind
+   the home indicator. body then needs a min-height or the two disagree and the
+   splash comes out two-tone. */
+html { background: var(--rock); }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Baloo 2', system-ui, -apple-system, sans-serif;
+  color: var(--text);
+  background: radial-gradient(120% 80% at 50% -10%, #26333f 0%, #141c25 45%, #0b1016 100%);
+  background-color: var(--rock);   /* after the shorthand, which resets it */
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+h1, h2, h3 { font-weight: 800; }
+.sec { font-size: 17px; margin: 22px 0 6px; color: var(--dim); text-transform: uppercase; letter-spacing: .08em; }
+.nudge { font-size: 15px; line-height: 1.45; color: var(--dim); margin: 4px 0 14px; }
+
+/* ------------------------------------------------------------- buttons -- */
+/* Overriding a gk-base component means overriding all of it: colour, shadow
+   and margin come as a set, and leaving one out ships a white label on a pale
+   fill or a stray drop shadow. */
+.btn.ghost {
+  background: transparent; color: var(--lamp); box-shadow: none;
+  border: 2px solid rgba(255,194,61,.42); padding: 12px 18px; font-size: 16px; margin: 6px 0;
+}
+.btn.ghost:active { transform: translateY(2px); box-shadow: none; }
+.btn.big { font-size: 21px; padding: 18px 28px; }
+.btn.small { font-size: 15px; padding: 10px 14px; box-shadow: 0 4px 0 var(--gk-accent-sh); }
+.btn.amber { background: var(--lamp); color: #241a05; box-shadow: 0 6px 0 var(--gk-accent-sh); }
+.btn:disabled { filter: grayscale(.65) brightness(.75); }
+
+.row-btns3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 8px 0; }
+.row-btns3 .btn { margin: 0; font-size: 15px; padding: 14px 6px; }
+.row-btns2 .btn { font-size: 16px; }
+
+.topbar.sticky { position: sticky; top: 0; z-index: 5; background: rgba(11,16,22,.92); backdrop-filter: blur(6px); }
+.map-player { font-size: 18px; }
+.map-stat { font-size: 15px; font-weight: 800; color: var(--lamp); white-space: nowrap; }
+
+/* -------------------------------------------------------------- splash -- */
+.lamp { font-size: 62px; filter: drop-shadow(0 0 26px rgba(255,194,61,.55)); }
+.logo {
+  font-size: clamp(38px, 13vw, 58px); line-height: .92; margin: 6px 0 8px;
+  letter-spacing: .04em; color: var(--paper); text-shadow: 0 4px 0 rgba(0,0,0,.45);
+}
+.logo span { display: block; color: var(--lamp); }
+.tagline { max-width: 420px; font-size: 16px; line-height: 1.45; color: var(--dim); margin: 0 0 18px; padding: 0 18px; }
+.splash-foot { display: flex; align-items: center; gap: 12px; margin-top: 20px; font-size: 14px; color: var(--dim); }
+.keys-hint { font-size: 13px; color: var(--dim); margin: 14px 18px 0; display: none; }
+@media (pointer: fine) { .keys-hint { display: block; } }
+
+/* ----------------------------------------------------------- seam map -- */
+.seam { margin: 20px 0 4px; border-left: 4px solid var(--sc, var(--lamp)); padding-left: 12px; }
+.seam h3 { margin: 0 0 2px; font-size: 20px; color: var(--paper); }
+.seam-blurb { margin: 0 0 10px; font-size: 14px; line-height: 1.4; color: var(--dim); }
+
+.shift-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+@media (min-width: 480px) { .shift-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+.shift {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 1px;
+  background: rgba(255,255,255,.07); border: none; border-radius: 14px;
+  padding: 10px 12px; cursor: pointer; color: var(--text); font-family: inherit;
+  box-shadow: 0 4px 0 rgba(0,0,0,.3); text-align: left;
+}
+.shift:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,.3); }
+.shift.next { outline: 3px solid var(--lamp); }
+.shift.locked { opacity: .38; cursor: not-allowed; }
+.sh-n { font-size: 13px; font-weight: 800; color: var(--sc, var(--lamp)); }
+.sh-name { font-size: 16px; font-weight: 800; color: var(--paper); }
+.sh-size { font-size: 12px; color: var(--dim); }
+.sh-stars { font-size: 14px; color: var(--lamp); letter-spacing: .06em; }
+
+/* --------------------------------------------------------- board screen -- */
+/* Never set `display` in a #screen-* rule: gk-base shows and hides screens
+   with .screen/.screen.active, and an id selector outranks both — which pins
+   the game screen visible on top of everything else, forever. */
+#screen-game {
+  align-items: stretch;      /* .screen centres its children, which collapses the stage to 0 wide */
+  justify-content: flex-start;
+  padding: 0;
+  overflow: hidden;
+  touch-action: none;
+}
+
+.gamebar {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  padding: calc(8px + env(safe-area-inset-top)) 12px 6px;
+  background: rgba(11,16,22,.9);
+}
+.gamebar .grow { flex: 1; }
+.iconbtn.small { width: 38px; height: 38px; font-size: 17px; border-radius: 11px; }
+.hud { font-size: 15px; font-weight: 800; white-space: nowrap; color: var(--text); }
+.hud.time { color: var(--lamp); min-width: 46px; text-align: right; font-variant-numeric: tabular-nums; }
+#hud-title { font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--paper); }
+
+.game-hint {
+  margin: 0; padding: 4px 14px 6px; font-size: 13px; line-height: 1.35;
+  color: var(--dim); text-align: center; background: rgba(11,16,22,.9);
+}
+
+.game-stage { position: relative; flex: 1; width: 100%; min-height: 0; }
+#cv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+
+/* Fixed height so the board never reflows when the labels inside change. */
+.actionbar {
+  display: flex; gap: 10px; width: 100%; align-items: center;
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+  background: rgba(11,16,22,.94);
+}
+.actionbar .btn { margin: 0; flex: 1; height: 52px; font-size: 16px; padding: 0 10px; }
+/* Its own slate rather than --gk-grey: white on the kit's grey measures 3.66:1,
+   which is a fail on a control the player looks at a hundred times a shift. */
+.btn.mode { background: #48525f; box-shadow: 0 5px 0 #2c343e; color: #fff; }
+.btn.mode.on { background: #a8342a; box-shadow: 0 5px 0 #6f1f18; color: #fff; }
+
+/* ------------------------------------------------------------- results -- */
+.res-inner { margin: auto; width: 100%; max-width: 460px; padding: 20px; text-align: center; }
+.res-emoji { font-size: 62px; }
+.res-title { font-size: 28px; margin: 2px 0 4px; color: var(--paper); }
+.res-stars { font-size: 34px; color: var(--lamp); letter-spacing: .1em; }
+.res-score { font-size: 40px; font-weight: 800; color: var(--lamp); font-variant-numeric: tabular-nums; }
+.res-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; margin: 14px 0; font-size: 14px; color: var(--dim); }
+.res-note { font-size: 15px; line-height: 1.45; color: var(--text); margin: 6px 0 4px; }
+.res-finished { font-size: 15px; color: var(--lamp); font-weight: 800; }
+.res-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
+.res-actions .btn { margin: 4px 0; }
+
+/* ------------------------------------------------------- daily / sizes -- */
+.daily-card {
+  display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center;
+  background: rgba(255,255,255,.07); border-radius: 18px; padding: 20px 16px;
+}
+.daily-big { font-size: 46px; font-weight: 800; color: var(--lamp); font-variant-numeric: tabular-nums; }
+.daily-card .btn { margin-top: 10px; }
+
+.size-list { display: flex; flex-direction: column; gap: 10px; }
+.size-card {
+  display: grid; grid-template-columns: 46px 1fr auto; align-items: center; gap: 12px;
+  background: rgba(255,255,255,.07); border: none; border-radius: 16px; padding: 14px;
+  cursor: pointer; color: var(--text); font-family: inherit; text-align: left;
+  box-shadow: 0 5px 0 rgba(0,0,0,.3);
+}
+.size-card:active { transform: translateY(2px); box-shadow: 0 3px 0 rgba(0,0,0,.3); }
+.size-icon { font-size: 30px; }
+.size-info { display: flex; flex-direction: column; }
+.size-name { font-size: 18px; font-weight: 800; color: var(--paper); }
+.size-meta { font-size: 13px; color: var(--dim); line-height: 1.4; }
+.size-best { font-size: 16px; font-weight: 800; color: var(--lamp); text-align: right; }
+.size-best small { display: block; font-size: 11px; color: var(--dim); font-weight: 700; }
+
+/* The kit's leaderboard rows, plus the extra daily-standings variant. */
+.lb-rows .lb-row { grid-template-columns: 40px 42px 1fr auto auto; }
+
+/* --------------------------------------------------------------- modal -- */
+.howto { text-align: left; max-width: 440px; max-height: 84vh; overflow-y: auto; }
+.howto p { font-size: 15px; line-height: 1.5; }
+.howto-list { margin: 10px 0 16px; padding-left: 20px; font-size: 14.5px; line-height: 1.55; }
+.howto-list li { margin-bottom: 8px; }
+.sheet .btn.wide { margin-top: 6px; }

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Canary Deep 🐤 — Minesweeper That Never Needs a Guess</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d131a">
+<meta name="description" content="Minesweeper a thousand feet down a coal mine. Every board is checked by a solver before you get it, so no square ever comes down to a coin toss — plus eighteen shifts, a bird in the cage that takes the hit for you, and a Daily Seam the whole family plays on the same board.">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Canary Deep">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lib/gk-base.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐤</text></svg>">
+</head>
+<body>
+
+<!-- Splash -->
+<div class="screen active" id="screen-splash">
+  <div class="splash-inner">
+    <div class="lamp" aria-hidden="true">🐤</div>
+    <h1 class="logo">CANARY<span>DEEP</span></h1>
+    <p class="tagline">Minesweeper, a thousand feet down. Every board is solved before you get it, so no square is ever a coin toss.</p>
+    <button class="btn big" id="btn-continue-as" style="display:none"></button>
+    <button class="btn big green" id="btn-start" onclick="App.play()">⛏️ Go Down</button>
+    <button class="btn ghost" onclick="App.howTo()">📖 How it works</button>
+    <button class="btn ghost" id="btn-install" style="display:none">📲 Add to Home Screen</button>
+    <p class="keys-hint">🖱️ Left click digs · right click marks · click a finished number to clear round it</p>
+    <div class="splash-foot">
+      <span id="sync-badge">⏳ connecting…</span>
+      <button class="btn-sound iconbtn">🔊</button>
+    </div>
+  </div>
+</div>
+
+<!-- Profile picker (roster + PIN modals are rendered by GK.Profiles) -->
+<div class="screen" id="screen-profiles">
+  <header class="topbar">
+    <button class="iconbtn" onclick="App.showScreen('splash')">←</button>
+    <h2 class="grow">Who's on shift?</h2>
+    <button class="btn-sound iconbtn">🔊</button>
+  </header>
+  <div class="content">
+    <div class="profile-list" id="profile-list"></div>
+  </div>
+</div>
+
+<!-- Seam map -->
+<div class="screen" id="screen-map">
+  <header class="topbar sticky">
+    <button class="iconbtn" onclick="App.play()">👥</button>
+    <div class="map-player grow" id="map-player"></div>
+    <span class="map-stat" id="map-stars"></span>
+    <button class="iconbtn" onclick="App.showLeaderboard()">🏆</button>
+  </header>
+  <div class="content">
+    <button class="btn big green wide" id="btn-continue"></button>
+    <div class="row-btns3">
+      <button class="btn blue" id="btn-daily" onclick="App.showDaily()">📅 Daily Seam</button>
+      <button class="btn blue" onclick="App.showFree()">⛏️ Free Dig</button>
+      <button class="btn blue" onclick="App.howTo()">📖 How</button>
+    </div>
+    <div id="seam-list"></div>
+  </div>
+</div>
+
+<!-- The board -->
+<div class="screen" id="screen-game">
+  <header class="gamebar">
+    <button class="iconbtn small" onclick="App.pause()">⏸</button>
+    <span class="hud grow" id="hud-title"></span>
+    <span class="hud" id="hud-mines">💣 0</span>
+    <span class="hud" id="hud-canary">🐤 0</span>
+    <span class="hud time" id="hud-time">0s</span>
+  </header>
+  <p class="game-hint" id="game-hint"></p>
+  <div class="game-stage" id="game-stage">
+    <canvas id="cv"></canvas>
+  </div>
+  <div class="actionbar">
+    <button class="btn mode" id="btn-flagmode" onclick="App.toggleFlagMode()">⛏️ Dig</button>
+    <button class="btn amber" id="btn-canary" onclick="App.canary()">🐤 Send the bird</button>
+  </div>
+</div>
+
+<!-- Results -->
+<div class="screen" id="screen-results">
+  <div class="res-inner">
+    <div class="res-emoji" id="res-emoji">🐤</div>
+    <h2 class="res-title" id="res-title"></h2>
+    <div class="res-stars" id="res-stars"></div>
+    <div class="res-score" id="res-score"></div>
+    <div class="res-stats" id="res-stats"></div>
+    <p class="res-note" id="res-note"></p>
+    <p class="res-finished" id="res-finished" style="display:none">👑 Every shift in the pit worked out. Nobody has ever cut this seam cleaner.</p>
+    <div class="res-actions">
+      <button class="btn grey" onclick="App.showMap()">🗺️ Map</button>
+      <button class="btn" id="res-retry" style="display:none"></button>
+      <button class="btn green" id="res-next" style="display:none"></button>
+    </div>
+  </div>
+</div>
+
+<!-- Daily Seam -->
+<div class="screen" id="screen-daily">
+  <header class="topbar sticky">
+    <button class="iconbtn" onclick="App.showMap()">←</button>
+    <h2 class="grow">📅 Daily Seam</h2>
+    <span class="map-stat" id="daily-date"></span>
+  </header>
+  <div class="content">
+    <p class="nudge">One board, one attempt, the same for everybody. The opening square is already dug so that every run starts from the same hole — which is what makes the times worth comparing.</p>
+    <div id="daily-body"></div>
+    <h3 class="sec">Today down the pit</h3>
+    <div class="lb-rows" id="daily-rows"></div>
+  </div>
+</div>
+
+<!-- Free dig -->
+<div class="screen" id="screen-free">
+  <header class="topbar sticky">
+    <button class="iconbtn" onclick="App.showMap()">←</button>
+    <h2 class="grow">⛏️ Free Dig</h2>
+    <button class="btn-sound iconbtn">🔊</button>
+  </header>
+  <div class="content">
+    <p class="nudge">A fresh board every time, no stars and nothing to unlock — just your best clean time for each size.</p>
+    <div class="size-list" id="size-list"></div>
+  </div>
+</div>
+
+<!-- Leaderboard -->
+<div class="screen" id="screen-leaderboard">
+  <header class="topbar sticky">
+    <button class="iconbtn" onclick="App.showMap()">←</button>
+    <h2 class="grow">🏆 The Crew</h2>
+    <button class="btn-sound iconbtn">🔊</button>
+  </header>
+  <div class="content">
+    <p class="nudge">Ranked by stars across the eighteen shifts. For a straight race, take the Daily Seam — everyone gets the same board.</p>
+    <div class="lb-rows" id="lb-rows"></div>
+  </div>
+</div>
+
+<!-- Pause -->
+<div class="modal" id="modal-pause">
+  <div class="sheet">
+    <h2>⏸ Lamp down</h2>
+    <p>The clock is stopped.</p>
+    <div class="row-btns2">
+      <button class="btn green" onclick="App.resume()">▶️ Back to it</button>
+      <button class="btn blue" onclick="App.restart()">↻ New board</button>
+    </div>
+    <button class="btn grey wide" onclick="App.quitShift()">🚪 Up the shaft</button>
+  </div>
+</div>
+
+<!-- How it works -->
+<div class="modal" id="modal-howto">
+  <div class="sheet howto">
+    <h2>📖 How it works</h2>
+    <p><b>It is minesweeper</b>, but no board here ever needs a guess. Before you are dealt one, a solver plays it through using logic alone — if it would ever come down to a coin toss, that board is thrown away and another is cut. Every square you are stuck on <i>can</i> be worked out.</p>
+    <ul class="howto-list">
+      <li><b>Tap</b> a square to dig it. Press, slide to correct yourself, then lift — nothing happens until you let go.</li>
+      <li><b>Hold</b> a square to plant a marker, or flip the button to 🚩 Mark and tap. On a mouse, right click.</li>
+      <li><b>Tap a number</b> you have fully marked to clear everything else around it in one go.</li>
+      <li><b>🐤 The bird</b> does one of two jobs. Send it ahead and it lands on a square you could already have proved safe. Keep it in the cage and it takes the hit the first time you tap gas, costing you 15 seconds instead of the shift.</li>
+      <li><b>Stars:</b> one for getting out, two for beating par, three for beating par with the cage still full.</li>
+    </ul>
+    <button class="btn green wide" onclick="GK.UI.closeModal('modal-howto')">Got it</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- gamekit (vendored from rvenning/gamekit into lib/) -->
+<script src="lib/gk-util.js"></script>
+<script src="lib/gk-audio.js"></script>
+<script src="lib/gk-ui.js"></script>
+<script src="lib/gk-storage.js"></script>
+<script src="lib/gk-profiles.js"></script>
+<script src="lib/gk-pwa.js"></script>
+<script src="lib/gk-fx.js"></script>
+<script src="lib/gk-debug.js"></script>
+<script>
+// Grit and coal dust: heavy specks that fall fast, and a shake that settles
+// quickly so the numbers stay readable.
+const Fx = GK.Fx.configure({
+  grav: 420, poolCap: 520, shakeMax: 13, shakeDecay: 32, shape: "square",
+  burstSpeed: 150, burstSize: 2.4, textSize: 14, textDy: -30, textCap: 18,
+  font: "'Baloo 2', system-ui, sans-serif",
+});
+const Tween = GK.Tween;
+</script>
+<script src="js/firebase-config.js"></script>
+<!-- board logic and data registries -->
+<script src="js/rng.js"></script>
+<script src="js/board.js"></script>
+<script src="js/solver.js"></script>
+<script src="js/generate.js"></script>
+<script src="js/shifts.js"></script>
+<!-- systems -->
+<script src="js/storage.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/game.js"></script>
+<script src="js/render.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

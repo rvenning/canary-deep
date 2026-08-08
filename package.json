@@ -1,0 +1,9 @@
+{
+  "name": "canary-deep",
+  "private": true,
+  "description": "Canary Deep — minesweeper down a coal mine, with every board proved solvable without a guess. Built on gamekit.",
+  "scripts": {
+    "test": "node --test",
+    "icons": "node tools/make-icons.js"
+  }
+}
