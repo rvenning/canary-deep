@@ -202,10 +202,15 @@ const Render = {
     el("hud-canary").textContent = `🐤 ${Game.canaries}`;
     const send = el("btn-canary");
     if (send) send.disabled = Game.canaries <= 0 || !Game.board || !Game.running();
-    const flag = el("btn-flagmode");
-    if (flag) {
-      flag.textContent = Game.flagMode ? "🚩 Mark" : "⛏️ Dig";
+
+    // Light whichever half of the switch is live. aria-pressed as well as the
+    // class, so the state is readable and not only visible.
+    const dig = el("btn-mode-dig"), flag = el("btn-mode-flag");
+    if (dig && flag) {
+      dig.classList.toggle("on", !Game.flagMode);
       flag.classList.toggle("on", Game.flagMode);
+      dig.setAttribute("aria-pressed", String(!Game.flagMode));
+      flag.setAttribute("aria-pressed", String(Game.flagMode));
     }
   },
 

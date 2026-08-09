@@ -228,11 +228,13 @@ const App = {
 
   /* ------------------------------------------------------------ in-game -- */
 
-  toggleFlagMode() {
-    Game.flagMode = !Game.flagMode;
+  // Set, not toggle: the switch shows both modes, so each half means "be this"
+  // rather than "swap".
+  setFlagMode(on) {
+    Game.flagMode = !!on;
     Sfx.click();
     Render.hud();
-    // Nothing exists to mark until the seam is cut, and it is cut around the
+    // Nothing exists to flag until the seam is cut, and it is cut around the
     // opening tap — so say so rather than letting the next tap do nothing.
     if (Game.flagMode && Game.state === "ready") GK.UI.toast("Dig first — the seam is cut around your opening tap");
   },

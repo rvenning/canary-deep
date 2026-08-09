@@ -27,11 +27,11 @@ const SEAMS = [
 const SHIFTS = [
   // ---------------------------------------------------- Surface Cuttings --
   { seam: 0, name: "Day Hole",       cols: 7,  rows: 9,  mines: 7,  canaries: 2,
-    hint: "Tap to dig. A number counts the gas in the eight squares touching it." },
+    hint: "Tap to dig. A number counts the gas in the eight squares touching it. Switch to 🚩 Flag to mark one." },
   { seam: 0, name: "Bell Pit",       cols: 8,  rows: 10, mines: 11, canaries: 2,
-    hint: "Hold a square to peg a marker on it — or flip to 🚩 mode with the button." },
+    hint: "Two ways to flag: the 🚩 Flag button, or just hold a square down without switching." },
   { seam: 0, name: "Drift Mouth",    cols: 8,  rows: 11, mines: 14, canaries: 2,
-    hint: "Tap a number you have fully marked and it clears everything else around it at once." },
+    hint: "Tap a number you have fully flagged and it clears everything else around it at once." },
   { seam: 0, name: "Candle Row",     cols: 9,  rows: 12, mines: 18, canaries: 2,
     hint: "A 1 beside a 1 along a wall: the far square is always clean air." },
   { seam: 0, name: "Pony Road",      cols: 9,  rows: 13, mines: 22, canaries: 2,
@@ -41,7 +41,7 @@ const SHIFTS = [
 
   // ----------------------------------------------------- The Deep Drifts --
   { seam: 1, name: "Shaft Bottom",   cols: 10, rows: 15, mines: 30, canaries: 2,
-    hint: "The counter at the top is the mines you have NOT marked. It solves more endings than you think." },
+    hint: "The counter at the top is the mines you have NOT flagged. It solves more endings than you think." },
   { seam: 1, name: "Pit Props",      cols: 11, rows: 15, mines: 34, canaries: 2,
     hint: "When two numbers overlap, subtract the smaller from the larger and read what is left." },
   { seam: 1, name: "Firedamp",       cols: 11, rows: 16, mines: 38, canaries: 1,
@@ -51,7 +51,7 @@ const SHIFTS = [
   { seam: 1, name: "Blackdamp",      cols: 12, rows: 18, mines: 49, canaries: 1,
     hint: "Work the edge of what you have opened rather than hunting across the dark." },
   { seam: 1, name: "Cage Landing",   cols: 12, rows: 19, mines: 53, canaries: 1,
-    hint: "Marking is not just bookkeeping — you cannot clear a number in one tap until it is marked." },
+    hint: "Flagging is not just bookkeeping — you cannot clear a number in one tap until it is flagged." },
 
   // ------------------------------------------------ The Blackwater Level --
   { seam: 2, name: "Flooded Heading", cols: 12, rows: 20, mines: 57, canaries: 1,

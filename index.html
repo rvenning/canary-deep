@@ -30,7 +30,7 @@
     <button class="btn big green" id="btn-start" onclick="App.play()">⛏️ Go Down</button>
     <button class="btn ghost" onclick="App.howTo()">📖 How it works</button>
     <button class="btn ghost" id="btn-install" style="display:none">📲 Add to Home Screen</button>
-    <p class="keys-hint">🖱️ Left click digs · right click marks · click a finished number to clear round it</p>
+    <p class="keys-hint">🖱️ Left click digs · right click flags · click a finished number to clear round it</p>
     <div class="splash-foot">
       <span id="sync-badge">⏳ connecting…</span>
       <button class="btn-sound iconbtn">🔊</button>
@@ -83,8 +83,14 @@
     <canvas id="cv"></canvas>
   </div>
   <div class="actionbar">
-    <button class="btn mode" id="btn-flagmode" onclick="App.toggleFlagMode()">⛏️ Dig</button>
-    <button class="btn amber" id="btn-canary" onclick="App.canary()">🐤 Send the bird</button>
+    <!-- Both modes are always on screen with the live one lit. A single button
+         that toggles its own label reads as "press this to dig" rather than
+         "you are digging", so nobody ever presses it and the flags go unfound. -->
+    <div class="modeswitch" role="group" aria-label="What a tap does">
+      <button class="mode-opt on" id="btn-mode-dig" aria-pressed="true" onclick="App.setFlagMode(false)">⛏️ Dig</button>
+      <button class="mode-opt" id="btn-mode-flag" aria-pressed="false" onclick="App.setFlagMode(true)">🚩 Flag</button>
+    </div>
+    <button class="btn amber" id="btn-canary" onclick="App.canary()">🐤 Send bird</button>
   </div>
 </div>
 
@@ -167,8 +173,8 @@
     <p><b>It is minesweeper</b>, but no board here ever needs a guess. Before you are dealt one, a solver plays it through using logic alone — if it would ever come down to a coin toss, that board is thrown away and another is cut. Every square you are stuck on <i>can</i> be worked out.</p>
     <ul class="howto-list">
       <li><b>Tap</b> a square to dig it. Press, slide to correct yourself, then lift — nothing happens until you let go.</li>
-      <li><b>Hold</b> a square to plant a marker, or flip the button to 🚩 Mark and tap. On a mouse, right click.</li>
-      <li><b>Tap a number</b> you have fully marked to clear everything else around it in one go.</li>
+      <li><b>🚩 Flag</b> a square you think holds gas, three ways: tap the <b>Flag</b> half of the switch under the board and then tap squares, or <b>hold</b> a square down without switching, or <b>right click</b> on a mouse. Tap a flag again to lift it.</li>
+      <li><b>Tap a number</b> you have fully flagged to clear everything else around it in one go — this is where the speed comes from.</li>
       <li><b>🐤 The bird</b> does one of two jobs. Send it ahead and it lands on a square you could already have proved safe. Keep it in the cage and it takes the hit the first time you tap gas, costing you 15 seconds instead of the shift.</li>
       <li><b>Stars:</b> one for getting out, two for beating par, three for beating par with the cage still full.</li>
     </ul>

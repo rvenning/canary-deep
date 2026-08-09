@@ -138,10 +138,23 @@ h1, h2, h3 { font-weight: 800; }
   background: rgba(11,16,22,.94);
 }
 .actionbar .btn { margin: 0; flex: 1; height: 52px; font-size: 16px; padding: 0 10px; }
-/* Its own slate rather than --gk-grey: white on the kit's grey measures 3.66:1,
+
+/* Dig / Flag as a two-part switch, both always visible with the live one lit.
+   Its own slate rather than --gk-grey: white on the kit's grey measures 3.66:1,
    which is a fail on a control the player looks at a hundred times a shift. */
-.btn.mode { background: #48525f; box-shadow: 0 5px 0 #2c343e; color: #fff; }
-.btn.mode.on { background: #a8342a; box-shadow: 0 5px 0 #6f1f18; color: #fff; }
+.modeswitch {
+  display: flex; flex: 1.15; height: 52px; border-radius: 16px; overflow: hidden;
+  background: #232b35; box-shadow: 0 5px 0 #12181f;
+}
+.mode-opt {
+  flex: 1; border: none; cursor: pointer; font-family: inherit;
+  font-size: 15px; font-weight: 800; color: #97a4b3; background: transparent;
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+  transition: background .12s, color .12s;
+}
+.mode-opt.on { color: #fff; background: #48525f; }
+#btn-mode-flag.on { background: #a8342a; }
+.mode-opt:active { transform: translateY(1px); }
 
 /* ------------------------------------------------------------- results -- */
 .res-inner { margin: auto; width: 100%; max-width: 460px; padding: 20px; text-align: center; }
