@@ -1,6 +1,6 @@
 // Canary Deep service worker — network-first, cache fallback.
 // BUMP the cache name on ANY shell change or devices keep serving the old build.
-const CACHE = "canary-deep-v5";
+const CACHE = "canary-deep-v6";
 const SHELL = [
   ".",
   "index.html",
